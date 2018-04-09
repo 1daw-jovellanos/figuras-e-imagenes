@@ -1,11 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package figuras;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,13 +10,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Un ejemplo de dibujo y animacion básica con clases.
+ * 
+ * <ul>
+ *      <li>En el evento windowOpen se crean los objetos de la escena.</li>
+ *      <li>Se crea un timer, que invocará al método que dibuja un fotograma
+ *          cada 40 ms</li>
+ *      <li>En cada fotograma:
+ *          <ul>
+ *              <li>Se borra todo el panel</li>
+ *              <li>Se dibuja <strong>toda</strong> la escena</li>
+ *              <li>Se recalcula la posición del pájaro</li>
+ *          </ul>
+ *      </li>
+ * </ul>
  * @author victor
  */
 public class MainForm extends javax.swing.JFrame {
-    List<Dibujable> objetos;
-    Imagen pajaro;
-    javax.swing.Timer timer;
+    
+    // Variables de instancia. Como siempre, solo las imprescindibles.
+    List<Dibujable> objetos; //La necesitamos accesible en varios métodos
+    Imagen pajaro; // La necesitamos accesible en varios métodos
+    javax.swing.Timer timer; // Por comodidad, por si queremos parar la animacion
 
     /**
      * Creates new form NewJFrame
@@ -40,6 +52,7 @@ public class MainForm extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -68,24 +81,29 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(232, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(94, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Inicial los objetos de la escena y los guarda en la lista de objetos
+     * dibujables
+     */
     private void iniciaObjetos() {
         final int k = 20;
         objetos = new ArrayList<>();
-        Figura f;
+        Figura f; // variables auxiliares
         FiguraRellenable fr;
+        
         // suelo
         f = new Linea(2 * k, 12 * k, 18 * k, 12 * k);
         f.setColor(Color.GREEN);
@@ -126,30 +144,46 @@ public class MainForm extends javax.swing.JFrame {
         fr.setColor(Color.ORANGE);
         objetos.add(fr);
 
+        // Pájaro. 
+        // Lo referenciamos con una variable de instancia para poder manipularlo
         pajaro = new Imagen("pajaro.png", 10 * k, 3 * k);
-        objetos.add(pajaro);
+        objetos.add(pajaro); // pero lo añadimos a la lista para que sea cómodo dibujarlo
 
         // Crear el timer y asociarlo a un método que dibuje
         // un fotograma
         int delay = 40; //milliseconds
         ActionListener task = new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                dibujarFotograma(); 
+                dibujarFotograma(); // Se invoca cada 40 ms
             }
         };
         timer = new javax.swing.Timer(delay, task);
         timer.start();
+//        Como en este caso el timer solo se pone en marcha, y no se para
+//        podría ser local. 
     }
 
+    /**
+     * Invocado cada 40 ms, hace la animación
+     */
     public void dibujarFotograma() {
         Graphics2D g = (Graphics2D)jPanel1.getGraphics();
+        // borrar panel
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 400, 300);
+        // dibujar todos los objetos
         for (Dibujable d : objetos) {
             d.dibujar(g);
         }
-        
+        // Poner al pájaro en otra posicion
         pajaro.setX((pajaro.getX()+3) % 400);
+        
+        // comentario
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Verdana", Font.PLAIN, 10) );
+        g.drawString("La posición en la lista es importante:", 10, 270);
+        g.drawString("El pájaro pasa por delante porque está el ultimo en la lista", 10, 280);
+        g.drawString("y se dibuja en último lugar", 10, 290);
     }
     
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
