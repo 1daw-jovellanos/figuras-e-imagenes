@@ -6,6 +6,9 @@
 package figuras;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +17,15 @@ import java.util.List;
  * @author victor
  */
 public class MainForm extends javax.swing.JFrame {
-
+    List<Dibujable> objetos;
     Imagen pajaro;
-    int xPajaro;
+    javax.swing.Timer timer;
+
     /**
      * Creates new form NewJFrame
      */
     public MainForm() {
-        initComponents();        
+        initComponents();
     }
 
     /**
@@ -77,46 +81,79 @@ public class MainForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void dibujaTodo() {
-                final int k = 20;
-        List<Dibujable> objetos = new ArrayList<>();
+    private void iniciaObjetos() {
+        final int k = 20;
+        objetos = new ArrayList<>();
         Figura f;
         FiguraRellenable fr;
         // suelo
-        f = new Linea(2*k, 12*k, 18*k, 12*k);
+        f = new Linea(2 * k, 12 * k, 18 * k, 12 * k);
         f.setColor(Color.GREEN);
         f.setGrosor(2);
         objetos.add(f);
-        
+
         // Cuerpo casa
-        fr = new Rectangulo(4*k, 6*k, 6*k, 6*k);
+        fr = new Rectangulo(4 * k, 6 * k, 6 * k, 6 * k);
         fr.setColorRelleno(Color.PINK);
         objetos.add(fr);
         
-        // Tejado
-        f = new Linea(4*k, 6*k, 7*k, 4*k);
-        objetos.add(f);
-        f = new Linea(7*k, 4*k, 10*k, 6*k);
-        objetos.add(f);
-        
-        // Sol
-        fr = new Ovalo(4*k, 4*k, 1*k, 1*k);
-        fr.setColorRelleno(Color.YELLOW);
+        // Puerta
+        fr = new Rectangulo(5 * k, 8 *k, 2 * k, 4 *k);
+        fr.setColorRelleno(Color.RED);
         objetos.add(fr);
-                
-        xPajaro = 10*k;
-        pajaro = new Imagen("pajaro.png", 10*k, 3*k);
-        objetos.add(pajaro);
         
-        for (Dibujable o:objetos) {
-            o.dibujar(jPanel1.getGraphics());
+        // Tejado
+        f = new Linea(4 * k, 6 * k, 7 * k, 4 * k);
+        f.setGrosor(3);
+        f.setColor(Color.DARK_GRAY);
+        objetos.add(f);
+        f = new Linea(7 * k, 4 * k, 10 * k, 6 * k);
+        f.setGrosor(3);
+        f.setColor(Color.DARK_GRAY);
+        objetos.add(f);
+
+        // Sol
+        f = new Linea(4*k, 3*k, 4*k, 5*k);
+        f.setColor(Color.YELLOW);
+        f.setGrosor(2);
+        objetos.add(f);
+        f = new Linea(3*k, 4*k, 5*k, 4*k);
+        f.setColor(Color.YELLOW);
+        f.setGrosor(2);
+        objetos.add(f);
+        fr = new Ovalo(4 * k, 4 * k, 1 * k, 1 * k);
+        fr.setColorRelleno(Color.YELLOW);
+        fr.setColor(Color.ORANGE);
+        objetos.add(fr);
+
+        pajaro = new Imagen("pajaro.png", 10 * k, 3 * k);
+        objetos.add(pajaro);
+
+        // Crear el timer y asociarlo a un método que dibuje
+        // un fotograma
+        int delay = 40; //milliseconds
+        ActionListener task = new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                dibujarFotograma(); 
+            }
+        };
+        timer = new javax.swing.Timer(delay, task);
+        timer.start();
+    }
+
+    public void dibujarFotograma() {
+        Graphics2D g = (Graphics2D)jPanel1.getGraphics();
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, 400, 300);
+        for (Dibujable d : objetos) {
+            d.dibujar(g);
         }
         
-        
+        pajaro.setX((pajaro.getX()+3) % 400);
     }
     
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        dibujaTodo();
+        iniciaObjetos();
     }//GEN-LAST:event_formWindowOpened
 
     /**
