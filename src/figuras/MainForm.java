@@ -15,11 +15,13 @@ import java.util.List;
  */
 public class MainForm extends javax.swing.JFrame {
 
+    Imagen pajaro;
+    int xPajaro;
     /**
      * Creates new form NewJFrame
      */
     public MainForm() {
-        initComponents();
+        initComponents();        
     }
 
     /**
@@ -91,17 +93,26 @@ public class MainForm extends javax.swing.JFrame {
         fr.setColorRelleno(Color.PINK);
         objetos.add(fr);
         
+        // Tejado
+        f = new Linea(4*k, 6*k, 7*k, 4*k);
+        objetos.add(f);
+        f = new Linea(7*k, 4*k, 10*k, 6*k);
+        objetos.add(f);
+        
         // Sol
         fr = new Ovalo(4*k, 4*k, 1*k, 1*k);
         fr.setColorRelleno(Color.YELLOW);
         objetos.add(fr);
                 
-        Imagen im = new Imagen("pajaro.png", 10*k, 3*k);
-        objetos.add(im);
+        xPajaro = 10*k;
+        pajaro = new Imagen("pajaro.png", 10*k, 3*k);
+        objetos.add(pajaro);
         
         for (Dibujable o:objetos) {
             o.dibujar(jPanel1.getGraphics());
         }
+        
+        
     }
     
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
